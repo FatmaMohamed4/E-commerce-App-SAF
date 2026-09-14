@@ -1,28 +1,22 @@
-const mongoose = require("mongoose");
 const express = require("express");
+require("dotenv").config();
+
+const db = require("./db.js");
+const userRouters = require("./routes/userRouter.js");
+const errorMW = require("./middleware/errorMiddleware.js");
 
 const app = express();
-require("dotenv").config();
+
 app.use(express.json());
 
-const userRouters =require('./routes/userRouter.js')
+// Routes
+app.use("/users", userRouters);
 
-const db = mongoose
-  .connect(process.env.MongoDB_URI,
-    // useNewUrlParser:true,
+// Error Middleware
+app.use(errorMW);
 
-)
-  .then(() => {
-    console.log("created");
-  })
-  .catch((err) => {
-    console.log("error");
-  });
-
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-app.use("/users", userRouters);
