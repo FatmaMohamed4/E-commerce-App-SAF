@@ -1,5 +1,5 @@
 const Product = require("../model/productSchema.js");
-
+const jwt=require("jsonwebtoken")
 // ==================== ADD PRODUCT ====================
 
 const addProduct = async (req, res, next) => {

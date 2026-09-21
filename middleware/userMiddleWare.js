@@ -1,7 +1,7 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
 require("dotenv").config();
-
+const jwt = require("jsonwebtoken");
 const ajv = new Ajv();
 
 addFormats(ajv);
