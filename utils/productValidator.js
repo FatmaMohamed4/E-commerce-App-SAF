@@ -18,45 +18,16 @@ const productValidator = {
         },
 
         description: {
-            type: "string",
-            minLength: 5
+            type: "string"
         },
 
         category: {
-            type: "string",
-            minLength: 2
+            type: "string"
         },
 
         stock: {
-            type: "number",
+            type: "integer",
             minimum: 0
-        },
-
-        images: {
-            type: "array",
-            items: {
-                type: "string"
-            }
-        },
-
-        colors: {
-            type: "array",
-            items: {
-                type: "string"
-            }
-        },
-
-        sizes: {
-            type: "array",
-            items: {
-                type: "string"
-            }
-        },
-
-        discount: {
-            type: "number",
-            minimum: 0,
-            maximum: 100
         }
     },
 
@@ -65,7 +36,7 @@ const productValidator = {
         "brand",
         "price",
         "description",
-        "category",
+       
         "stock"
     ],
 

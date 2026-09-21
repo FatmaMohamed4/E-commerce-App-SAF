@@ -12,9 +12,10 @@ const {
     deleteAllProducts
 } = require("../controller/productController.js");
 
-const authMiddleware = require("../middleware/userMiddleWare.js");
+const { authMiddleware } = require("../middleware/userMiddleWare.js");
 const adminPermission = require("../middleware/adminPermission.js");
 const productMiddleware = require("../middleware/productMiddleware.js");
+
 
 
 // ==================== ADMIN ROUTES ====================

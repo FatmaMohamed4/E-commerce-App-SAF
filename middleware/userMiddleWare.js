@@ -1,5 +1,6 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
+require("dotenv").config();
 
 const ajv = new Ajv();
 
@@ -9,7 +10,7 @@ const schema = require("../utils/userValidator.js");
 
 const validate = ajv.compile(schema);
 
-module.exports = (req, res, next) => {
+const validateRegister = (req, res, next) => {
   const valid = validate(req.body);
 
   if (!valid) {
@@ -24,37 +25,31 @@ module.exports = (req, res, next) => {
 };
 
 
-// const jwt = require("jsonwebtoken");
+const authMiddleware = (req, res, next) => {
+    try {
 
-// require("dotenv").config();
+        const token = req.header("x-auth-token");
 
-// const verifyToken = (req, res, next) => {
-//     try {
+        if (!token) {
+            return res.status(401).json({
+                message: "Access Denied. No token provided"
+            });
+        }
 
-//         const token = req.header("x-auth-token");
+        const decodedPayload = jwt.verify(
+            token,
+            process.env.Secret_key
+        );
 
-//         if (!token) {
-//             return res.status(401).json({
-//                 message: "Access Denied. No token provided"
-//             });
-//         }
+        req.user = decodedPayload;
 
-//         const decodedPayload = jwt.verify(
-//             token,
-//             process.env.Secret_key
-//         );
+        next();
 
-//         req.user = decodedPayload;
+    } catch (error) {
 
-//         next();
+        next(error)
 
-//     } catch (error) {
+    }
+};
 
-//         return res.status(401).json({
-//             message: "Invalid or expired token"
-//         });
-
-//     }
-// };
-
-// module.exports = authMiddleware;
+module.exports = {authMiddleware,validateRegister};
