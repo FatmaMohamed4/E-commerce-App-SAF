@@ -6,7 +6,7 @@ const db = require("./db.js");
 
 const userRouters = require("./routes/userRouter.js");
 const productRouter=require("./routes/productRouter.js")
-
+const categoryRouter = require("./routes/categoryRouter.js")
 const errorMW = require("./middleware/errorMiddleware.js");
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(express.json());
 // Routes
 app.use("/users", userRouters);
 app.use("/products",productRouter)
-
+app.use("/category",categoryRouter)
 
 // Error Middleware
 app.use(errorMW);
