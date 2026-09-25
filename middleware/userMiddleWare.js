@@ -10,6 +10,8 @@ const schema = require("../utils/userValidator.js");
 
 const validate = ajv.compile(schema);
 
+
+
 const validateRegister = (req, res, next) => {
   const valid = validate(req.body);
 

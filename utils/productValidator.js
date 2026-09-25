@@ -34,7 +34,7 @@ const productValidator = {
     required: [
         "productName",
         "brand",
-        "price",
+        // "price",
         "description",
        
         "stock"

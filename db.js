@@ -1,18 +1,10 @@
-
 const mongoose = require("mongoose");
-const express = require("express");
 
-const db = mongoose
-  .connect(process.env.MongoDB_URI,
-    // useNewUrlParser:true,
-
-)
+mongoose
+  .connect(process.env.MongoDB_URI)
   .then(() => {
-    console.log("created");
+    console.log("MongoDB connected");
   })
   .catch((err) => {
-    console.log("error");
+    console.log("MongoDB connection error:", err);
   });
-
-
-  module.exports=db

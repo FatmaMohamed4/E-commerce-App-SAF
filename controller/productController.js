@@ -1,4 +1,5 @@
 const Product = require("../model/productSchema.js");
+const Category =require("../model/categorySchema.js")
 const jwt=require("jsonwebtoken")
 // ==================== ADD PRODUCT ====================
 
@@ -17,6 +18,14 @@ const addProduct = async (req, res, next) => {
             discount
         } = req.body;
 
+        const existCategory = await Category.findById(category);
+
+        if (!existCategory) {
+            return res.status(404).json({
+                message: "Category not found"
+            });
+        }
+
         const product = await Product.create({
             productName,
             brand,
@@ -29,7 +38,9 @@ const addProduct = async (req, res, next) => {
             sizes,
             discount
         });
+        existCategory.products.push(product._id);
 
+        await existCategory.save();
         return res.status(201).json({
             message: "Product added successfully",
             product
