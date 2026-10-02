@@ -29,8 +29,8 @@ const validateRegister = (req, res, next) => {
 
 const authMiddleware = (req, res, next) => {
     try {
-
         const token = req.header("x-auth-token");
+
 
         if (!token) {
             return res.status(401).json({
@@ -48,10 +48,8 @@ const authMiddleware = (req, res, next) => {
         next();
 
     } catch (error) {
-
-        next(error)
-
+        console.log("AUTH ERROR:", error);
+        next(error);
     }
 };
-
 module.exports = {authMiddleware,validateRegister};

@@ -4,37 +4,37 @@ const productSchema = new mongoose.Schema({
 
     productName: {
         type: String,
-        // required: true,
+        required: true,
         trim: true
     },
 
     brand: {
         type: String,
-        // required: true,
+        required: true,
         trim: true
     },
 
     price: {
         type: Number,
-        // required: true,
+        required: true,
         min: 0
     },
 
     description: {
         type: String,
-        // required: true,
+        required: true,
         trim: true
     },
 
     category: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "Category",
-        // required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        required: true,
         type:String
     },
     stock: {
         type: Number,
-        // required: true,
+        required: true,
         min: 0,
         default: 0
     },

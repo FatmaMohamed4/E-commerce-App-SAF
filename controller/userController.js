@@ -4,6 +4,18 @@ const jwt = require("jsonwebtoken");
 const sendOTP = require("../utils/sendEmail.js");
 
 
+const getAllUsers =async(req,res,next)=>{
+  try{
+    const users =await User.find()
+    res.status(200).json({
+      users
+    })
+  }catch(error){
+    next(error)
+  }
+}
+
+
 // =========================
 // REGISTER
 // =========================
@@ -353,5 +365,6 @@ module.exports = {
   forgotPassword,
   verifyOTP,
   resetPassword ,
-  updateProfile
+  updateProfile,
+  getAllUsers
 };
