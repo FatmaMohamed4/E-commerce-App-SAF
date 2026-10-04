@@ -1,25 +1,17 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
-const Product = require('../model/productSchema.js'); 
+const Product = require('../model/productSchema.js');
 
-// 1. Cloudinary Configuration
+// 1. Cloudinary Config
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
   api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
-// 2. Multer Storage Engine
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
+// 2. استخدام Memory Storage المخصص لبيئات Serverless مثل Vercel
+const storage = multer.memoryStorage();
 
-// 3. File Filter (Images Only)
 function fileFilter(req, file, cb) {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
@@ -28,23 +20,19 @@ function fileFilter(req, file, cb) {
   }
 }
 
-// 4. Initialize Multer with a max limit of 10 files
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit per file
+  limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// Middleware for handling up to 10 photos with field name 'photos'
 const uploadImagesMiddleware = upload.array('photos', 10);
 
-// 5. Upload Multiple Product Images Controller
+// 3. رفع الصور مباشرة من الـ Buffer إلى Cloudinary
 const uploadProductImages = async (req, res, next) => {
   try {
-    // ✅ التصحيح هنا: استخراج الـ id وتسميته productId
     const { id: productId } = req.params;
 
-    // Check if files were uploaded
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         status: 'fail',
@@ -52,21 +40,23 @@ const uploadProductImages = async (req, res, next) => {
       });
     }
 
-    // Upload all images to Cloudinary in parallel
-    const uploadPromises = req.files.map(async (file) => {
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'products'
+    // الرفع من الذاكرة (buffer) باستخدام upload_stream
+    const uploadPromises = req.files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'products' },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result.secure_url);
+          }
+        );
+        stream.end(file.buffer);
       });
-
-      // Delete the temporary file from local server after uploading to Cloudinary
-      fs.unlinkSync(file.path);
-
-      return result.secure_url;
     });
 
     const photoUrls = await Promise.all(uploadPromises);
 
-    // Update product in DB (appending new images to existing array)
+    // تحديث قاعدة البيانات
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       { $push: { images: {$each: photoUrls } } },
@@ -80,7 +70,6 @@ const uploadProductImages = async (req, res, next) => {
       });
     }
 
-    // Success response
     res.status(200).json({
       status: 'success',
       message: `${photoUrls.length} image(s) uploaded successfully.`,
