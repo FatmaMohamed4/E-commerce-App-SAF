@@ -6,6 +6,7 @@ const app = express();
 
 app.use(cors())
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const userRouters = require("./routes/userRouter.js");
 const cartRouter=require("./routes/cartRouter.js")
@@ -13,7 +14,11 @@ const productRouter = require("./routes/productRouter.js");
 const categoryRouter = require("./routes/categoryRouter.js");
 const orderRouter =require("./routes/orderRouter.js");
 const paymentRouter=require("./routes/paymentRouter.js")
+
+
 const errorMW = require("./middleware/errorMiddleware.js");
+const imagesRouter=require("./routes/uploadPhotosRouter.js")
+
 
 app.use("/users", userRouters);
 app.use("/products", productRouter);
@@ -21,6 +26,8 @@ app.use("/category", categoryRouter);
 app.use("/cart",cartRouter)
 app.use("/order",orderRouter)
 app.use("/payment",paymentRouter)
+
+app.use("/images",imagesRouter)
 app.use(errorMW);
 
 

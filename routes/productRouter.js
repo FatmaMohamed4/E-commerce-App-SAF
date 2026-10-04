@@ -15,6 +15,7 @@ const {
 const { authMiddleware } = require("../middleware/userMiddleWare.js");
 const adminPermission = require("../middleware/adminPermission.js");
 const productMiddleware = require("../middleware/productMiddleware.js");
+const upload = require("../middleware/uploadMiddleware.js");
 
 
 
@@ -26,6 +27,7 @@ router.post(
     authMiddleware,
     adminPermission,
     productMiddleware,
+    
     addProduct
 );
 

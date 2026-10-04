@@ -39,9 +39,11 @@ const productSchema = new mongoose.Schema({
         default: 0
     },
 
-    images: [{
+   images: [
+    {
         type: String
-    }],
+    }
+    ],
 
     colors: [{
         type: String

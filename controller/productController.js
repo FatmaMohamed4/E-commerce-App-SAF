@@ -1,30 +1,26 @@
 const Product = require("../model/productSchema.js");
 const Category =require("../model/categorySchema.js")
 const jwt=require("jsonwebtoken")
+const cloudinary =require("../config/cloudinary.js")
 // ==================== ADD PRODUCT ====================
 
 const addProduct = async (req, res, next) => {
     try {
-        const {
-            productName,
-            brand,
-            price,
-            description,
-            category,
-            stock,
-            images,
-            colors,
-            sizes,
-            discount
-        } = req.body;
+        const { productName, brand, price, description, category, stock, colors, sizes, discount } = req.body;
 
         const existCategory = await Category.findById(category);
-
         if (!existCategory) {
-            return res.status(404).json({
-                message: "Category not found"
-            });
+            return res.status(404).json({ message: "Category not found" });
         }
+
+        // رفع الصور يدوياً إلى Cloudinary
+        const uploadPromises = req.files.map((file) =>
+            cloudinary.uploader.upload(file.path, { folder: "products" })
+        );
+        const uploadResults = await Promise.all(uploadPromises);
+
+        // استخراج الـ Secure URLs
+        const imageUrls = uploadResults.map((result) => result.secure_url);
 
         const product = await Product.create({
             productName,
@@ -33,14 +29,15 @@ const addProduct = async (req, res, next) => {
             description,
             category,
             stock,
-            images,
+            images: imageUrls,
             colors,
             sizes,
             discount
         });
-        existCategory.products.push(product._id);
 
+        existCategory.products.push(product._id);
         await existCategory.save();
+
         return res.status(201).json({
             message: "Product added successfully",
             product
@@ -50,8 +47,6 @@ const addProduct = async (req, res, next) => {
         next(error);
     }
 };
-
-
 // ==================== GET ALL PRODUCTS ====================
 
 const getAllProducts = async (req, res, next) => {
