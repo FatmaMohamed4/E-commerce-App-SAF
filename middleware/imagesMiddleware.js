@@ -83,8 +83,38 @@ const uploadProductImages = async (req, res, next) => {
     next(error);
   }
 };
+const getProductImages = async (req, res, next) => {
+  try {
+    const { id: productId } = req.params;
+
+    // البحث عن المنتج في قاعدة البيانات وجلب حقل الصور فقط
+    const product = await Product.findById(productId).select('images');
+
+    if (!product) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Product not found with the provided ID.'
+      });
+    }
+
+    // إرجاع قائمة الصور
+    res.status(200).json({
+      status: 'success',
+      count: product.images ? product.images.length : 0,
+      data: {
+        images: product.images || []
+      }
+    });
+
+  } catch (error) {
+    console.error('Get Images Error:', error);
+    next(error);
+  }
+};
+
 
 module.exports = {
   uploadImagesMiddleware,
-  uploadProductImages
+  uploadProductImages,
+  getProductImages
 };
