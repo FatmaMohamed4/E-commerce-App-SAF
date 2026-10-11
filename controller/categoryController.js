@@ -91,22 +91,24 @@ const deleteCategory =async(req,res,next)=>{
         next(error);
     }
 }
+
 const updateCategory = async (req, res, next) => {
     try {
         const { id } = req.params;
-        
+        const { name } = req.body;
 
-       
         // Check if another category has the same name
-        const existCategory = await Category.findOne({
-            name,
-            _id: { $ne: id }
-        });
-
-        if (existCategory) {
-            return res.status(409).json({
-                message: "Category already exists"
+        if (name) {
+            const existCategory = await Category.findOne({
+                name,
+                _id: { $ne: id }
             });
+
+            if (existCategory) {
+                return res.status(409).json({
+                    message: "Category already exists"
+                });
+            }
         }
 
         const category = await Category.findByIdAndUpdate(
