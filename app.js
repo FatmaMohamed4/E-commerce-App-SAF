@@ -14,7 +14,7 @@ const productRouter = require("./routes/productRouter.js");
 const categoryRouter = require("./routes/categoryRouter.js");
 const orderRouter =require("./routes/orderRouter.js");
 const paymentRouter=require("./routes/paymentRouter.js")
-
+const reviewRouter=require("./routes/reviewRouter.js")
 
 const errorMW = require("./middleware/errorMiddleware.js");
 const imagesRouter=require("./routes/uploadPhotosRouter.js")
@@ -26,6 +26,7 @@ app.use("/category", categoryRouter);
 app.use("/cart",cartRouter)
 app.use("/order",orderRouter)
 app.use("/payment",paymentRouter)
+app.use("/review",reviewRouter)
 
 app.use("/images",imagesRouter)
 app.use(errorMW);
